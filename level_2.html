@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>LVL2</title>
+    <link rel="icon" href="img/saw.jpg" type="image/x-icon">
+    <style>
+        body {
+            background-color: #000;
+            color: #0f0;
+            font-family: "Courier New", monospace;
+            text-align: center;
+            padding: 100px;
+        }
+        h1 {
+            font-size: 36px;
+            color: blue; 
+        }
+        input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            font-size: 18px;
+            margin: 20px;
+        }
+        button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .submit-button {
+            background-color: #ff0000;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <h2>Ты знаешь что с этим делать</h2>
+    <h1>Q29tZSBvbiwgZG9uJ3QgbGluZ2VyIQ==</h1>
+  
+    <input type="text" id="answerInput" placeholder="Ваш ответ">
+    <br>
+
+
+    <button id="nextPageButton">
+        <div class="submit-button">Ответить</div>
+    </button>
+
+ 
+
+    <script>
+        var attempts = 0;
+
+        document.getElementById("nextPageButton").addEventListener("click", function () {
+            var answerInput = document.getElementById("answerInput");
+            var userAnswer = answerInput.value.trim();
+            var correctAnswer = "Co" + "me on," + " do" + "n't " + "ling" + "e" + "r!";
+            
+            if (userAnswer === correctAnswer) {
+                window.location.href = "level_3.html"; 
+            } else {
+                alert("Ответ неверный или ошибки в написании.");
+                attempts++;
+                if (attempts >= 2) {
+                   
+                    // Подсказка
+                    alert('Подсказка: Base64');
+                }
+            }
+        });
+    </script>
+    
+</body>
+</html>

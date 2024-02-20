@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LVL3</title>
+    <link rel="icon" type="image/x-icon" href="img/saw.jpg">
+
+    <style>
+        body {
+          background-color: #000;
+          color: #0f0;
+          font-family: 'Courier New', monospace;
+          text-align: center;
+        
+        }
+        #gameCanvas {
+          border: 2px solid #0f0;
+          display: block;
+          margin: 0 auto;
+        }
+        /* img{
+          align: Right;
+        } */
+      </style>
+    
+</head>
+
+
+<body>
+  <h1>Сейчас ты проиграешь</h1>
+  
+    <canvas id="gameCanvas" width="730" height="520"></canvas>
+  
+    <script>
+      const canvas = document.getElementById('gameCanvas');
+      const ctx = canvas.getContext('2d');
+      // Определение переменных и констант
+      const ballRadius = 10;
+      let x = canvas.width / 2;
+      let y = canvas.height - 30;
+      let dx = 2;
+      let dy = -2;
+      const paddleHeight = 10;
+      const paddleWidth = 75;
+      let paddleX = (canvas.width - paddleWidth) / 2;
+      let rightPressed = false;
+      let leftPressed = false;
+      const brickRowCount = 5;
+      const brickColumnCount = 8;
+      const brickWidth = 75;
+      const brickHeight = 20;
+      const brickPadding = 10;
+      const brickOffsetTop = 30;
+      const brickOffsetLeft = 30;
+      const bricks = [];
+      for (let c = 0; c < brickColumnCount; c++) {
+        bricks[c] = [];
+        for (let r = 0; r < brickRowCount; r++) {
+          bricks[c][r] = { x: 0, y: 0, status: 1 }; // Инициализация кирпичей/плит
+        }
+      }
+      let score = 0;
+      let intervalId;
+  
+      // Функция отображения мяча
+      function drawBall() {
+        ctx.beginPath();
+        ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+        ctx.fillStyle = "#fff";
+        ctx.fill();
+        ctx.closePath();
+      }
+  
+      // Функция отображения платформы
+      function drawPaddle() {
+        ctx.beginPath();
+        ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+        ctx.fillStyle = "#0f0";
+        ctx.fill();
+        ctx.closePath();
+      }
+  
+      // Функция отображения плит
+      function drawBricks() {
+        for (let c = 0; c < brickColumnCount; c++) {
+          for (let r = 0; r < brickRowCount; r++) {
+            if (bricks[c][r].status === 1) {
+              let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+              let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+              bricks[c][r].x = brickX;
+              bricks[c][r].y = brickY;
+              ctx.beginPath();
+              ctx.rect(brickX, brickY, brickWidth, brickHeight);
+              ctx.fillStyle = "#ff0000";
+              ctx.fill();
+              ctx.closePath();
+            }
+          }
+        }
+      }
+  
+      // Функция отображения счета игры
+      function drawScore() {
+        ctx.font = "16px Courier New";
+        ctx.fillStyle = "#0f0";
+        ctx.fillText("Score: " + score, 8, 20);
+      }
+  
+      // Функция отрисовки всего игрового поля (вызывается при каждом кадре анимации)
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBricks();
+        drawBall();
+        drawPaddle();
+        drawScore();
+        collisionDetection();
+  
+        if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+          dx = -dx; // Отражение движения мяча при столкновении с границами игрового поля по горизонтали
+        }
+        if (y + dy < ballRadius) {
+          dy = -dy; // Отражение движения мяча при столкновении с границами игрового поля по вертикали
+        } else if (y + dy > canvas.height - ballRadius) {
+          if (x > paddleX && x < paddleX + paddleWidth) {
+            dy = -dy; // Отражение движения мяча при столкновении с платформой
+          } else {
+            alert("GAME OVER"); // Вывод сообщения о завершении игры
+            document.location.reload(); // Перезагрузка страницы
+            clearInterval(intervalId); // Остановка анимации игры
+          }
+        }
+  
+        if (rightPressed && paddleX < canvas.width - paddleWidth) {
+          paddleX += 7; // Движение платформы вправо
+        } else if (leftPressed && paddleX > 0) {
+          paddleX -= 7; // Движение платформы влево
+        }
+  
+        x += dx; // Изменение координаты мяча по горизонтали
+        y += dy; // Изменение координаты мяча по вертикали
+      }
+  
+      // Функция обнаружения столкновений мяча с кирпичами/плитами
+      function collisionDetection() {
+        for (let c = 0; c < brickColumnCount; c++) {
+          for (let r = 0; r < brickRowCount; r++) {
+            const brick = bricks[c][r];
+            if (brick.status === 1) {
+              if (x > brick.x && x < brick.x + brickWidth && y > brick.y && y < brick.y + brickHeight) {
+                dy = -dy; // Отражение движения мяча при столкновении с плитой
+                brick.status = 0; // Установка статуса плиты, чтобы скрыть его
+                score++; // Увеличение счета
+                if (score === brickRowCount * brickColumnCount) {
+                  alert("Молодец, лови ключ!"); // Вывод сообщения о выигрыше
+                  clearInterval(intervalId); // Остановка анимации игры
+                  displayFinishText(); // Вывод сообщения о завершении игры
+                }
+              }
+            }
+          }
+        }
+      }
+  
+      // Функция обработки нажатия клавиш
+      function keyDownHandler(e) {
+        if (e.key === "Right" || e.key === "ArrowRight") {
+          rightPressed = true;  //  нажатие вправо
+        } else if (e.key === "Left" || e.key === "ArrowLeft") {
+          leftPressed = true;  //  нажатие влево
+        }
+      }
+  
+      // Функция обработки отпускания клавиш
+      function keyUpHandler(e) {
+        if (e.key === "Right" || e.key === "ArrowRight") {
+          rightPressed = false; // Сброс флага нажатия клавиши вправо
+        } else if (e.key === "Left" || e.key === "ArrowLeft") {
+          leftPressed = false; // Сброс флага нажатия клавиши влево
+        }
+      }
+  
+      // Регистрация обработчиков событий нажатия и отпускания клавиш
+      document.addEventListener("keydown", keyDownHandler, false);
+      document.addEventListener("keyup", keyUpHandler, false);
+  
+      // Функция отображения сообщения о завершении игры
+      function displayFinishText() {
+        ctx.font = "140px Courier New";
+        ctx.fillStyle = "#3500ff";
+        ctx.fillText("Ф", (canvas.width / 2) - 24, canvas.height / 2); // Пройдено
+      }
+  
+      intervalId = setInterval(draw, 1); // Запуск анимации игры с обновлением кадров каждую 0.1 миллисекунду
+    </script>
+
+
+
+
+    <h1>движение влево ←</h1>
+    <h1>движение вправо →</h1>
+</body>
+</html>

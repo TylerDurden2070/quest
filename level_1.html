@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="icon" href="img/saw.jpg" type="image/x-icon">
+    <meta charset="UTF-8">
+    <title>LVL1</title>
+
+</head>
+
+
+<body>
+
+    <div id="container">
+        <img src="img/den.jpg" alt="Ошибка">
+        <h2>1. Что за человек на фото?</h2>
+        <p style="color: #ff0000;">PS. Гуглить можно все задания</p>
+        <input type="text" id="answer" placeholder="Образец записи: Иван Иванов">
+        <br><br>
+        <button id="submit-button" onclick="checkAnswer()">Ответить</button>
+    </div>
+
+      
+
+<script>
+    function checkAnswer() {
+        var answerInput = document.getElementById("answer");
+        var answer = answerInput.value.trim();
+
+        if (answer === "Э"+   "д"+ "в"+"ар"+"д"+" Сн"+"оу"+ "д"+  "е"+"н") {
+            window.location.href = "level_2.html";
+        } else {
+
+            alert("Ответ неверный или ошибки в написании.");
+
+            setTimeout(function() {
+                alert("Подсказка: Его уволили из ЦРУ после слива системы PRISM, а также X-Keyscore и Tempora.");
+            }, 7000); // Время отображения подсказки (7сек)
+        }
+    }
+</script>
+
+
+
+<style>
+    body {
+        background-color: #000;
+        color: #00ff00;
+        font-family: 'Courier New', monospace;
+        text-align: center;
+    }
+
+    #container {
+        margin-top: 100px;
+    }
+
+    img {
+        width: 360px;
+        height: auto;
+    }
+
+    input[type="text"] {
+        width: 20%;
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    #submit-button {
+        background-color: #ff0000;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+    }
+</style>
+
+</body>
+</html>
